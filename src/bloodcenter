@@ -1,0 +1,70 @@
+#!/usr/bin/node
+
+const rl = require('readline-sync'); 
+
+const donatorsArray = [];
+
+function appendNewDonator(name, age, weigth, bloodType, lastDonationDate)
+{
+	let donator = {
+		name: name,
+		age: age,
+		weigth: weigth, 
+		bloodType: bloodType,
+		lastDonationDate: lastDonationDate,
+	};
+
+	return donatorsArray.push(donator);
+}
+
+function dateStringToDateArray(string)
+{
+	let dateArray = [];
+	let tokens = string.split('/');
+
+	if (tokens.length == 0) return undefined;
+	if (tokens.length > 3) return undefined;
+
+	for (let i = 0; i < tokens.length; ++i) {
+		let numericValue = Number(tokens[i]);
+
+		if (isNaN(numericValue))
+			return undefined;
+
+		dateArray[i] = numericValue;
+	}
+
+	if (dateArray[2] < 1960) return undefined;
+	return dateArray;
+}
+
+function verifyBloodType(string)
+{
+	return string === "A-" || string === "B-" || string === "B+" || string === "A+" || string === "B" || string === "A" || string == "AB" || string === "AB+" || string === "AB-" || string === "O-" || string === "O+" || string === "O" ;
+}
+
+function getDonatorByBloodType(target)
+{
+	for (let i = 0; i < donatorsArray.length; ++i) {
+		if (donatorsArray[i].bloodType === target) return donatorsArray[i];
+	}
+
+	return undefined;
+}
+
+function getDonatorByLastDonationDate(date)
+{
+	for (let i = 0; i < donatorsArray.length; ++i) {
+		let k;
+		for (k = 0; k < donatorsArray[i].lastDonationDate.length; ++k) {
+			if (donatorsArray[i].lastDonationDate[k] !== date[k]) 
+				break;
+		}
+
+		if (k === date.length) 
+			return donatorsArray[i];
+	}
+
+	return undefined;
+}
+
