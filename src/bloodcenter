@@ -1,70 +1,167 @@
 #!/usr/bin/node
 
+const DONATOR_MIN_AGE = 16;
+const DONATOR_MAX_AGE = 69; 
+
+const DONATOR_MIN_WEIGHT = 50;
+
 const rl = require('readline-sync'); 
-
 const donatorsArray = [];
+const validBloodTypes = ["A", "A+", "A-", "B", "B+", "B-", "AB", "AB+", "AB-", "O", "O+", "O-"];
 
-function appendNewDonator(name, age, weigth, bloodType, lastDonationDate)
+function verifyDate(string)
 {
-	let donator = {
-		name: name,
-		age: age,
-		weigth: weigth, 
-		bloodType: bloodType,
-		lastDonationDate: lastDonationDate,
-	};
-
-	return donatorsArray.push(donator);
-}
-
-function dateStringToDateArray(string)
-{
-	let dateArray = [];
 	let tokens = string.split('/');
+	if (tokens.length !== 3) return false;
 
-	if (tokens.length == 0) return undefined;
-	if (tokens.length > 3) return undefined;
+	for (let i = 0; i < 3; ++i) {
+		if ((tokens[i].length != 2 && i != 2) || (i == 2 && tokens[i].length != 4))
+			return false;
 
-	for (let i = 0; i < tokens.length; ++i) {
-		let numericValue = Number(tokens[i]);
+		for (let j = 0; j < tokens[i].length; ++j) {
+			if (tokens[i][j] < '0' || tokens[i][j] > '9')
+				return false;
+		}
+	} 
 
-		if (isNaN(numericValue))
-			return undefined;
-
-		dateArray[i] = numericValue;
-	}
-
-	if (dateArray[2] < 1960) return undefined;
-	return dateArray;
+	return true;
 }
 
 function verifyBloodType(string)
 {
-	return string === "A-" || string === "B-" || string === "B+" || string === "A+" || string === "B" || string === "A" || string == "AB" || string === "AB+" || string === "AB-" || string === "O-" || string === "O+" || string === "O" ;
-}
-
-function getDonatorByBloodType(target)
-{
-	for (let i = 0; i < donatorsArray.length; ++i) {
-		if (donatorsArray[i].bloodType === target) return donatorsArray[i];
+	for (let i = 0; i < validBloodTypes.length; ++i) {
+		if (string === validBloodTypes[i])
+			return true;
 	}
 
-	return undefined;
+	return false;
 }
 
-function getDonatorByLastDonationDate(date)
+function verifyAge(age)
 {
+	return (!isNaN(age) && age >= DONATOR_MIN_AGE && age <= DONATOR_MAX_AGE);
+}
+
+function verifyWeight(weight)
+{
+	return (!isNaN(weight) && weight >= DONATOR_MIN_WEIGHT);
+}
+
+function appendNewDonator() {
+	let name = rl.question("Nome: "); 
+	let age = NaN; 
+	let weight = NaN; 
+	let bloodType = '';
+	let lastDonationDate = '';
+
+	while (!verifyAge(age)) 
+		age = Number(rl.question('Idade: '));
+
+	while (!verifyWeight(weight)) 
+		weight = Number(rl.question('Peso: ')); 
+	
+	while (!verifyBloodType(bloodType)) 
+		bloodType = rl.question('Tipo sanguíneo: ');
+	
+	while (!verifyDate(lastDonationDate))
+		lastDonationDate = rl.question('Última doação (dd/mm/aaaa): ');
+
+	let donator = {
+		name:             name,
+		age:              age,
+		weight:           weight,
+		bloodType:        bloodType,
+		lastDonationDate: lastDonationDate,
+	};
+
+	donatorsArray.push(donator);
+
+	console.log("Doador registrado com sucesso!\n");
+}
+
+function printDonator(donator)
+{
+	console.log(`${donator.name} | ${donator.age} | ${donator.weight} | ${donator.bloodType} | ${donator.lastDonationDate}`);
+} 
+
+function getDonatorsWithBloodType()
+{
+	let target = ''; 
+	
+	while (!verifyBloodType(target))
+		target = rl.question('Digite o tipo sanguíneo desejado: ');
+
+	console.log("------------------------"); 
+	console.log("RESULTADO DA BUSCA:");
+	console.log("------------------------"); 
+
 	for (let i = 0; i < donatorsArray.length; ++i) {
-		let k;
-		for (k = 0; k < donatorsArray[i].lastDonationDate.length; ++k) {
-			if (donatorsArray[i].lastDonationDate[k] !== date[k]) 
-				break;
+		if (target === donatorsArray[i].bloodType)
+			printDonator(donatorsArray[i]);
+	}
+}
+
+function getDonatorsWithLastDate()
+{
+	let date = '';
+	
+	while (!verifyDate(date))
+		date = rl.question('Digite a data desejada (dd/mm/aaaa): ');
+
+	console.log("------------------------"); 
+	console.log("RESULTADO DA BUSCA:");
+	console.log("------------------------"); 
+
+	for (let i = 0; i < donatorsArray.length; ++i) {
+		if (date === donatorsArray[i].lastDonationDate)
+			printDonator(donatorsArray[i]);
+	}
+}
+
+function listDonators()
+{
+	console.log("--------------------");
+	console.log("LISTAGEM DE DOADORES:");
+	console.log("--------------------");
+	console.log("NOME             | IDADE | PESO | TIPO SANGUÍNEO | ÚLTIMA DOAÇÃO ");
+	for (donator of donatorsArray) 
+		printDonator(donator);
+}
+
+function main() {
+	let option;
+
+	console.log("===== SISTEMA DE REGISTRO DE DOADORES DE SANGUE =====");
+
+	while (option !== 5) {
+		console.log("1. Registrar Doador");
+		console.log("2. Listar Doadores");
+		console.log("3. Buscar Doadores por Tipo Sanguíneo");
+		console.log("4. Buscar Doadores por Data da Última Doação");
+		console.log("5. Sair");
+
+		option = Number(rl.question("Escolha uma opção: "));
+
+		switch(option) {
+		case 1:
+			appendNewDonator();
+			break;
+		case 2:
+			listDonators();
+			break;
+		case 3:
+			getDonatorsWithBloodType();
+			break;
+		case 4:
+			getDonatorsWithLastDate();
+			break;
+		case 5:
+			console.log("Encerrando o programa...");
+			break;
+		default:
+			console.log("Opção inválida.");
 		}
-
-		if (k === date.length) 
-			return donatorsArray[i];
 	}
-
-	return undefined;
 }
 
+main();
