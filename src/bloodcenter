@@ -9,6 +9,9 @@ const rl = require('readline-sync');
 const donatorsArray = [];
 const validBloodTypes = ["A", "A+", "A-", "B", "B+", "B-", "AB", "AB+", "AB-", "O", "O+", "O-"];
 
+/* magic number */
+let donatorsNameMin = 20;
+
 function verifyDate(string)
 {
 	let tokens = string.split('/');
@@ -57,6 +60,12 @@ function appendNewDonator() {
 	while (!verifyAge(age)) 
 		age = Number(rl.question('Idade: '));
 
+	if (donatorsNameMin < name.length)
+		donatorsNameMin = name.length;
+
+	while (name.length < donatorsNameMin)
+		name += ' ';
+
 	while (!verifyWeight(weight)) 
 		weight = Number(rl.question('Peso: ')); 
 	
@@ -81,7 +90,20 @@ function appendNewDonator() {
 
 function printDonator(donator)
 {
-	console.log(`${donator.name} | ${donator.age} | ${donator.weight} | ${donator.bloodType} | ${donator.lastDonationDate}`);
+	let donatorAge       = String(donator.age);
+	let donatorWeight    = String(donator.weight); 
+	let donatorBloodType = String(donator.bloodType);
+
+	while (donatorAge.length < 5)
+		donatorAge += ' '; 
+	
+	while (donatorWeight.length < 4)
+		donatorWeight += ' ';
+	
+	while (donatorBloodType.length < 14)
+		donatorBloodType += ' ';
+
+	console.log(`${donator.name} | ${donatorAge} | ${donatorWeight} | ${donatorBloodType} | ${donator.lastDonationDate}`);
 } 
 
 function getDonatorsWithBloodType()
@@ -120,10 +142,17 @@ function getDonatorsWithLastDate()
 
 function listDonators()
 {
+	let nameMsg = "NOME"; 
+	
+	while (nameMsg.length < donatorsNameMin) 
+		nameMsg += ' ';
+	
+	nameMsg += ' |';
+	
 	console.log("--------------------");
 	console.log("LISTAGEM DE DOADORES:");
 	console.log("--------------------");
-	console.log("NOME             | IDADE | PESO | TIPO SANGUÍNEO | ÚLTIMA DOAÇÃO ");
+	console.log(`${nameMsg} IDADE | PESO | TIPO SANGUÍNEO | ÚLTIMA DOAÇÃO `);
 	for (donator of donatorsArray) 
 		printDonator(donator);
 }
