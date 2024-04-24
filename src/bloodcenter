@@ -41,16 +41,18 @@ function verifyBloodType(string)
 			return true;
 	}
 	
-	if (string !== "")
+	if (string !== "") {
 		console.log('Digite um tipo sanguíneo válido.');
+	}
 
 	return false;
 }
 
 function verifyAge(age)
 {
-	if (isNaN(age))
+	if (isNaN(age)) {
 		return false;
+	}
 
 	if (age < DonatorMinAge) {
 		console.log(`A idade do doador deve ser no mínimo ${DonatorMinAge}`);
@@ -83,20 +85,25 @@ function appendNewDonator() {
 	let bloodType = '';
 	let lastDonationDate = '';
 
-	while (!verifyAge(age)) 
+	while (!verifyAge(age)) {
 		age = Number(rl.question('Idade: '));
+	}
 
-	if (donatorsNameMin < name.length)
+	if (donatorsNameMin < name.length) {
 		donatorsNameMin = name.length;
+	}
 
-	while (!verifyWeight(weight)) 
+	while (!verifyWeight(weight)) { 
 		weight = Number(rl.question('Peso: ')); 
-	
-	while (!verifyBloodType(bloodType)) 
+	}
+
+	while (!verifyBloodType(bloodType)) {
 		bloodType = rl.question('Tipo sanguíneo: ').toUpperCase();
+	}
 	
-	while (!verifyDate(lastDonationDate))
+	while (!verifyDate(lastDonationDate)) {
 		lastDonationDate = rl.question('Última doação (dd/mm/aaaa): ');
+	}
 
 	let donator = {
 		name:             name,
@@ -118,17 +125,21 @@ function printDonator(donator)
 	let donatorBloodType = String(donator.bloodType);
 	let donatorName      = String(donator.name);
 
-	while (donatorAge.length < 5)
+	while (donatorAge.length < 5) {
 		donatorAge += ' '; 
+	}
 	
-	while (donatorWeight.length < 4)
+	while (donatorWeight.length < 4) {
 		donatorWeight += ' ';
+	}
 	
-	while (donatorBloodType.length < 14)
+	while (donatorBloodType.length < 14) {
 		donatorBloodType += ' ';
+	}
 
-	while (donatorName.length < donatorsNameMin) 
+	while (donatorName.length < donatorsNameMin) {
 		donatorName += ' ';
+	}
 
 	console.log(`${donatorName} | ${donatorAge} | ${donatorWeight} | ${donatorBloodType} | ${donator.lastDonationDate}`);
 } 
@@ -137,16 +148,18 @@ function getDonatorsWithBloodType()
 {
 	let target = ''; 
 	
-	while (!verifyBloodType(target))
+	while (!verifyBloodType(target)) {
 		target = rl.question('Digite o tipo sanguíneo desejado: ');
+	}
 
 	console.log("------------------------"); 
 	console.log("RESULTADO DA BUSCA:");
 	console.log("------------------------"); 
 
 	for (let i = 0; i < donatorsArray.length; ++i) {
-		if (target === donatorsArray[i].bloodType)
+		if (target === donatorsArray[i].bloodType) {
 			printDonator(donatorsArray[i]);
+		}
 	}
 }
 
@@ -154,21 +167,29 @@ function getDonatorsUntilDate()
 {
 	let date = '';
 	
-	while (!verifyDate(date))
+	while (!verifyDate(date)) {
 		date = rl.question('Digite a data desejada (dd/mm/aaaa): ');
+	}
+
+	let searchTokens  = date.split('/');
 
 	console.log("------------------------"); 
 	console.log("RESULTADO DA BUSCA:");
 	console.log("------------------------");
 
 	for (let i = 0; i < donatorsArray.length; ++i) {
-		let searchTokens  = date.split('/');
-		let donatorTokens = date.split('/');
+		let donatorTokens = donatorsArray[i].lastDonationDate.split('/');
 
-		if (Number(searchTokens[2]) <= Number(donatorTokens[2])
-		&& (Number(searchTokens[1]) <= Number(donatorTokens[1]))
-		&& (Number(searchTokens[0]) <= Number(donatorTokens[0]))) {
+		if (Number(searchTokens[2]) > Number(donatorTokens[2])) {
 			printDonator(donatorsArray[i]);
+		} else if (Number(searchTokens[2]) === Number(donatorTokens[2])) {
+			if (Number(searchTokens[1] > Number(donatorTokens[1]))) {
+				printDonator(donatorsArray[i]); 
+			} else if (Number(searchTokens[1] === Number(donatorTokens[1]))) {
+				if (Number(searchTokens[0]) >= Number(donatorTokens[0])) {
+					printDonator(donatorsArray[i]);
+				}
+			}
 		}
 	}
 }
@@ -177,8 +198,9 @@ function listDonators()
 {
 	let nameMsg = "NOME"; 
 	
-	while (nameMsg.length < donatorsNameMin) 
+	while (nameMsg.length < donatorsNameMin) {
 		nameMsg += ' ';
+	}
 	
 	nameMsg += ' |';
 	
@@ -186,8 +208,9 @@ function listDonators()
 	console.log("LISTAGEM DE DOADORES:");
 	console.log("--------------------");
 	console.log(`${nameMsg} IDADE | PESO | TIPO SANGUÍNEO | ÚLTIMA DOAÇÃO `);
-	for (donator of donatorsArray) 
+	for (donator of donatorsArray) {
 		printDonator(donator);
+	}
 }
 
 function main() {
