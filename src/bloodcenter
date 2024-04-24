@@ -18,12 +18,16 @@ function verifyDate(string)
 	if (tokens.length !== 3) return false;
 
 	for (let i = 0; i < 3; ++i) {
-		if ((tokens[i].length != 2 && i != 2) || (i == 2 && tokens[i].length != 4))
+		if ((tokens[i].length != 2 && i != 2) || (i == 2 && tokens[i].length != 4)) {
+			console.log('Data inválida. Esperado o formato: dd/mm/aaaa.');
 			return false;
+		}
 
 		for (let j = 0; j < tokens[i].length; ++j) {
-			if (tokens[i][j] < '0' || tokens[i][j] > '9')
+			if (tokens[i][j] < '0' || tokens[i][j] > '9') {
+				console.log('Data inválida. Contém caractere não-numeral.');
 				return false;
+			}
 		}
 	} 
 
@@ -182,7 +186,6 @@ function listDonators()
 
 function main() {
 	let option;
-
 	console.log("===== SISTEMA DE REGISTRO DE DOADORES DE SANGUE =====");
 
 	while (option !== 5) {
