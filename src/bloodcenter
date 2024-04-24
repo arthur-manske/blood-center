@@ -1,9 +1,9 @@
 #!/usr/bin/node
 
-const DONATOR_MIN_AGE = 16;
-const DONATOR_MAX_AGE = 69; 
+const DonatorMinAge = 16;
+const DonatorMaxAge = 69; 
 
-const DONATOR_MIN_WEIGHT = 50;
+const DonatorMinWeight = 50;
 
 const rl = require('readline-sync'); 
 const donatorsArray = [];
@@ -52,11 +52,11 @@ function verifyAge(age)
 	if (isNaN(age))
 		return false;
 
-	if (age < DONATOR_MIN_AGE) {
-		console.log(`A idade do doador deve ser no mínimo ${DONATOR_MIN_AGE}`);
+	if (age < DonatorMinAge) {
+		console.log(`A idade do doador deve ser no mínimo ${DonatorMinAge}`);
 		return false;
-	} else if (age > DONATOR_MAX_AGE) {
-		console.log(`A idade do doador deve ser no máximo ${DONATOR_MAX_AGE}`);
+	} else if (age > DonatorMaxAge) {
+		console.log(`A idade do doador deve ser no máximo ${DonatorMaxAge}`);
 		return false;
 	}
 
@@ -68,8 +68,8 @@ function verifyWeight(weight)
 	if (isNaN(weight))
 		return false;
 
-	if (weight < DONATOR_MIN_WEIGHT) {
-		console.log(`O peso do doador deve ser no mínimo ${DONATOR_MIN_WEIGHT}`);
+	if (weight < DonatorMinWeight) {
+		console.log(`O peso do doador deve ser no mínimo ${DonatorMinWeight}`);
 		return false;
 	}
 
@@ -150,7 +150,7 @@ function getDonatorsWithBloodType()
 	}
 }
 
-function getDonatorsWithLastDate()
+function getDonatorsUntilDate()
 {
 	let date = '';
 	
@@ -159,11 +159,17 @@ function getDonatorsWithLastDate()
 
 	console.log("------------------------"); 
 	console.log("RESULTADO DA BUSCA:");
-	console.log("------------------------"); 
+	console.log("------------------------");
 
 	for (let i = 0; i < donatorsArray.length; ++i) {
-		if (date === donatorsArray[i].lastDonationDate)
+		let searchTokens  = date.split('/');
+		let donatorTokens = date.split('/');
+
+		if (Number(searchTokens[2]) <= Number(donatorTokens[2])
+		&& (Number(searchTokens[1]) <= Number(donatorTokens[1]))
+		&& (Number(searchTokens[0]) <= Number(donatorTokens[0]))) {
 			printDonator(donatorsArray[i]);
+		}
 	}
 }
 
@@ -208,7 +214,7 @@ function main() {
 			getDonatorsWithBloodType();
 			break;
 		case 4:
-			getDonatorsWithLastDate();
+			getDonatorsUntilDate();
 			break;
 		case 5:
 			console.log("Encerrando o programa...");
