@@ -228,6 +228,7 @@ function listDonators()
 function main() {
 	let option;
 
+	console.clear();
 	console.log("----- SISTEMA DE REGISTRO DE DOADORES DE SANGUE -----\n");
 
 	while (option !== 5) {
